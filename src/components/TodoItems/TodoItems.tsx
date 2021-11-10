@@ -10,7 +10,8 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
 import { motion } from 'framer-motion';
-import { TodoItem, useTodoItems } from './TodoItemsContext';
+import { useTodoItems } from '../TodoItemsContext/TodoItemsContext';
+import {deleteTodoAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
 
 const spring = {
     type: 'spring',
@@ -70,16 +71,13 @@ export const TodoItemCard = function ({ item }: { item: TodoItem }) {
     const { dispatch } = useTodoItems();
 
     const handleDelete = useCallback(
-        () => dispatch({ type: 'delete', data: { id: item.id } }),
+        () => dispatch(deleteTodoAC({id:item.id})),
         [item.id, dispatch],
     );
 
     const handleToggleDone = useCallback(
         () =>
-            dispatch({
-                type: 'toggleDone',
-                data: { id: item.id },
-            }),
+            dispatch(toggleDoneAC({ id: item.id })),
         [item.id, dispatch],
     );
 

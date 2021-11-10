@@ -74,7 +74,7 @@
 - Избавьтесь от `any` в интерфейсе `TodoItemsAction` 
 
 #### T3. Иммутабельность
-- Переведите код `todoItemsReducer` на [ImmerJS](https://immerjs.github.io/immer/)
+- Переведите код `todoReducer` на [ImmerJS](https://immerjs.github.io/immer/)
 
 #### T4. Свои идеи
 - Предложите и реализуйте свои технические улучшения (кода, инфраструктуры и т.д.)

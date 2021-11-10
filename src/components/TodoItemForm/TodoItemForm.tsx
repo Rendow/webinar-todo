@@ -1,8 +1,9 @@
-import { useTodoItems } from './TodoItemsContext';
+import { useTodoItems } from '../TodoItemsContext/TodoItemsContext';
 import { useForm, Controller } from 'react-hook-form';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
+import {addTodoAC} from "../TodoItemsContext/todo-reducer";
 
 const useInputStyles = makeStyles(() => ({
     root: {
@@ -17,8 +18,8 @@ export default function TodoItemForm() {
 
     return (
         <form
-            onSubmit={handleSubmit((formData) => {
-                dispatch({ type: 'add', data: { todoItem: formData } });
+            onSubmit={handleSubmit((formData: { title: string; details?: string}) => {
+                dispatch(addTodoAC(formData));
                 reset({ title: '', details: '' });
             })}
         >
