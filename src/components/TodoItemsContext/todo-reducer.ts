@@ -19,6 +19,7 @@ export type TodoItemsAction =
     | ReturnType<typeof addTodoAC>
     | ReturnType<typeof deleteTodoAC>
     | ReturnType<typeof toggleDoneAC>
+    | ReturnType<typeof updateTaskAC>
 
 // actions
 export const loadStateAC = (data: TodoItemsState) => ({type: 'TODO/LOAD-STATE', data} as const)
@@ -27,6 +28,7 @@ export const deleteTodoAC = (data: { id: string }) => ({type: 'TODO/DELETE-TODO'
 export const toggleDoneAC = (data: { id: string }) => ({type: 'TODO/TOGGLE-DONE-TODO', data} as const)
 export const dragAndDropAC = (data: { source: number, destination: number }) => ({type: 'TODO/DRAG-AND-DROP', data} as const)
 export const sortAC = () => ({type: 'TODO/SORT'} as const)
+export const updateTaskAC = (data: { id: string, title:string }) => ({type: 'TODO/UPDATE-TASK',data} as const)
 
 
 export function todoReducer(state: TodoItemsState, action: TodoItemsAction):TodoItemsState {
@@ -68,7 +70,14 @@ export function todoReducer(state: TodoItemsState, action: TodoItemsAction):Todo
                    return (a.done === b.done) ? 0 : a.done ? 1 : -1;
                })
             }))
-
+        case 'TODO/UPDATE-TASK': {
+            const itemIndex = state.todoItems.findIndex(
+                ({id}) => id === action.data.id,
+            );
+            return produce(state, ((draft) => {
+                draft.todoItems[itemIndex].title = action.data.title
+            }))
+        }
         default:
             throw new Error()
     }

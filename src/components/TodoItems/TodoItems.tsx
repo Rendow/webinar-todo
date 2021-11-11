@@ -11,7 +11,14 @@ import {makeStyles} from '@material-ui/core/styles';
 import classnames from 'classnames';
 import {motion} from 'framer-motion';
 import {useTodoItems} from '../TodoItemsContext/TodoItemsContext';
-import {deleteTodoAC, dragAndDropAC, sortAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
+import {
+    deleteTodoAC,
+    dragAndDropAC,
+    sortAC,
+    TodoItem,
+    toggleDoneAC,
+    updateTaskAC
+} from "../TodoItemsContext/todo-reducer";
 import {
     DragDropContext,
     Draggable,
@@ -21,6 +28,7 @@ import {
     DropResult,
     ResponderProvided
 } from 'react-beautiful-dnd';
+import {EditableSpan} from "../../features/EditableSpan";
 
 const spring = {
     type: 'spring',
@@ -97,6 +105,12 @@ export const TodoItemCard = function ({item, index}: { item: TodoItem, index: nu
             dispatch(sortAC())
         }, [item.id, dispatch]);
 
+    const handleUpdate = useCallback(
+        (title:string) => {
+            dispatch(updateTaskAC({id: item.id, title}))
+        }
+        ,[item.id, dispatch]);
+
     return (
         <Draggable
             draggableId={item.id} index={index}>
@@ -125,7 +139,8 @@ export const TodoItemCard = function ({item, index}: { item: TodoItem, index: nu
                                         color="primary"
                                     />
                                 }
-                                label={item.title}
+
+                                label={<EditableSpan changeTitle={handleUpdate} title={item.title}/>}
                             />
                         }
                     />
