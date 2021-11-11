@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/TodoList/static/css/main.b67bd49d.chunk.css",
-    "main.js": "/TodoList/static/js/main.2c64aa4f.chunk.js",
-    "main.js.map": "/TodoList/static/js/main.2c64aa4f.chunk.js.map",
-    "runtime-main.js": "/TodoList/static/js/runtime-main.830f9394.js",
-    "runtime-main.js.map": "/TodoList/static/js/runtime-main.830f9394.js.map",
-    "static/js/2.801eb6cc.chunk.js": "/TodoList/static/js/2.801eb6cc.chunk.js",
-    "static/js/2.801eb6cc.chunk.js.map": "/TodoList/static/js/2.801eb6cc.chunk.js.map",
-    "static/js/3.eaff2ab6.chunk.js": "/TodoList/static/js/3.eaff2ab6.chunk.js",
-    "static/js/3.eaff2ab6.chunk.js.map": "/TodoList/static/js/3.eaff2ab6.chunk.js.map",
-    "index.html": "/TodoList/index.html",
-    "static/css/main.b67bd49d.chunk.css.map": "/TodoList/static/css/main.b67bd49d.chunk.css.map",
-    "static/js/2.801eb6cc.chunk.js.LICENSE.txt": "/TodoList/static/js/2.801eb6cc.chunk.js.LICENSE.txt"
+    "main.css": "/webinar-todo/static/css/main.e8e02f8b.chunk.css",
+    "main.js": "/webinar-todo/static/js/main.598d4765.chunk.js",
+    "main.js.map": "/webinar-todo/static/js/main.598d4765.chunk.js.map",
+    "runtime-main.js": "/webinar-todo/static/js/runtime-main.ca6439f8.js",
+    "runtime-main.js.map": "/webinar-todo/static/js/runtime-main.ca6439f8.js.map",
+    "static/js/2.801eb6cc.chunk.js": "/webinar-todo/static/js/2.801eb6cc.chunk.js",
+    "static/js/2.801eb6cc.chunk.js.map": "/webinar-todo/static/js/2.801eb6cc.chunk.js.map",
+    "static/js/3.eaff2ab6.chunk.js": "/webinar-todo/static/js/3.eaff2ab6.chunk.js",
+    "static/js/3.eaff2ab6.chunk.js.map": "/webinar-todo/static/js/3.eaff2ab6.chunk.js.map",
+    "index.html": "/webinar-todo/index.html",
+    "static/css/main.e8e02f8b.chunk.css.map": "/webinar-todo/static/css/main.e8e02f8b.chunk.css.map",
+    "static/js/2.801eb6cc.chunk.js.LICENSE.txt": "/webinar-todo/static/js/2.801eb6cc.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.830f9394.js",
+    "static/js/runtime-main.ca6439f8.js",
     "static/js/2.801eb6cc.chunk.js",
-    "static/css/main.b67bd49d.chunk.css",
-    "static/js/main.2c64aa4f.chunk.js"
+    "static/css/main.e8e02f8b.chunk.css",
+    "static/js/main.598d4765.chunk.js"
   ]
 }
