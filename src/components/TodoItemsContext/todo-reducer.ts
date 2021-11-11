@@ -1,3 +1,5 @@
+import {produce} from 'immer'
+
 //types
 export interface TodoItem {
     id: string;
@@ -29,56 +31,44 @@ export const sortAC = () => ({type: 'TODO/SORT'} as const)
 
 export function todoReducer(state: TodoItemsState, action: TodoItemsAction):TodoItemsState {
     switch (action.type) {
+
         case 'TODO/LOAD-STATE': {
             return action.data;
         }
+
         case 'TODO/ADD-TODO':
-            return {
-                ...state,
-                todoItems: [
-                    {id: generateId(), done: false, ...action.data},
-                    ...state.todoItems,
-                ],
-            };
+            return produce(state, ((draft) => {
+                draft.todoItems.unshift({id: generateId(), done: false, ...action.data})
+            }))
+
         case 'TODO/DELETE-TODO':
-            return {
-                ...state,
-                todoItems: state.todoItems.filter(
-                    ({id}) => id !== action.data.id,
-                ),
-            };
+            return produce(state, ((draft) => {
+                draft.todoItems = draft.todoItems.filter(({id}) => id !== action.data.id)
+            }));
+
         case 'TODO/TOGGLE-DONE-TODO': {
             const itemIndex = state.todoItems.findIndex(
                 ({id}) => id === action.data.id,
             );
-            const item = state.todoItems[itemIndex];
-            return {
-                ...state,
-                todoItems: [
-                    ...state.todoItems.slice(0, itemIndex),
-                    {...item, done: !item.done},
-                    ...state.todoItems.slice(itemIndex + 1),
-
-                ],
-            };
+            return produce(state, ((draft) => {
+                draft.todoItems[itemIndex].done = !draft.todoItems[itemIndex].done
+            }));
         }
 
         case 'TODO/DRAG-AND-DROP':
-            const {source, destination} = action.data
-            const stateCopy = {...state};
-            const todoList = stateCopy.todoItems
-            const todo = stateCopy.todoItems.splice(source, 1);
-            todoList.splice(destination, 0, ...todo)
+             const {source, destination} = action.data
+             return produce(state, ((draft) => {
+                const todo = draft.todoItems.splice(source, 1)
+                draft.todoItems.splice(destination, 0, ...todo)
+            }));
 
-            return stateCopy
-        case 'TODO/SORT': {
+        case 'TODO/SORT':
+            return produce(state, ((draft) => {
+                draft.todoItems.sort((a, b) => {
+                   return (a.done === b.done) ? 0 : a.done ? 1 : -1;
+               })
+            }))
 
-            const newTodoArray = [...state.todoItems];
-            newTodoArray.sort((a, b) => {
-                return (a.done === b.done) ? 0 : a.done ? 1 : -1;
-            });
-            return {...state, todoItems: newTodoArray}
-        }
         default:
             throw new Error()
     }

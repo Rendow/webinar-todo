@@ -98,7 +98,7 @@ export const TodoItemCard = function ({item, index}: { item: TodoItem, index: nu
         }, [item.id, dispatch]);
 
     return (
-        <Draggable //isDragDisabled={item.done}
+        <Draggable
             draggableId={item.id} index={index}>
             {(provided: DraggableProvided) => (
 
