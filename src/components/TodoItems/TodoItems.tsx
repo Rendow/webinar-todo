@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,11 +7,20 @@ import IconButton from '@material-ui/core/IconButton';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import classnames from 'classnames';
-import { motion } from 'framer-motion';
-import { useTodoItems } from '../TodoItemsContext/TodoItemsContext';
-import {deleteTodoAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
+import {motion} from 'framer-motion';
+import {useTodoItems} from '../TodoItemsContext/TodoItemsContext';
+import {deleteTodoAC, dragAndDropAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
+import {
+    DragDropContext,
+    Draggable,
+    DraggableProvided,
+    Droppable,
+    DroppableProvided,
+    DropResult,
+    ResponderProvided
+} from 'react-beautiful-dnd';
 
 const spring = {
     type: 'spring',
@@ -23,16 +32,19 @@ const spring = {
 const useTodoItemListStyles = makeStyles({
     root: {
         listStyle: 'none',
-        padding: 0,
+        padding: '20px 0',
     },
 });
 
+
 export const TodoItemsList = function () {
-    const { todoItems } = useTodoItems();
+    const {todoItems} = useTodoItems();
+    const {dispatch} = useTodoItems();
 
     const classes = useTodoItemListStyles();
 
     const sortedItems = todoItems.slice().sort((a, b) => {
+
         if (a.done && !b.done) {
             return 1;
         }
@@ -44,14 +56,31 @@ export const TodoItemsList = function () {
         return 0;
     });
 
+    const handleDragEnd = (result: DropResult, provided?: ResponderProvided) => {
+        const {destination, source} = result
+        if (!destination) return;
+        if (destination.index === source.index && destination.droppableId === source.droppableId) return;
+
+        dispatch(dragAndDropAC({source: source.index, destination: destination.index}))
+    }
     return (
-        <ul className={classes.root}>
-            {sortedItems.map((item) => (
-                <motion.li key={item.id} transition={spring} layout={true}>
-                    <TodoItemCard item={item} />
-                </motion.li>
-            ))}
-        </ul>
+        <DragDropContext onDragEnd={handleDragEnd}>
+            <Droppable droppableId="todo" direction="vertical">
+                {(providedDroppable: DroppableProvided) => (
+                    <ul className={classes.root}
+                        ref={providedDroppable.innerRef}  {...providedDroppable.droppableProps}>
+
+                        {sortedItems.map((item, index) => (
+                            <motion.li key={item.id} transition={spring}
+                                // layout={true}
+                            >
+                                <TodoItemCard index={index} item={item}/>
+                            </motion.li>))}
+                        {providedDroppable.placeholder}
+
+                    </ul>)}
+            </Droppable>
+        </DragDropContext>
     );
 };
 
@@ -66,54 +95,61 @@ const useTodoItemCardStyles = makeStyles({
     },
 });
 
-export const TodoItemCard = function ({ item }: { item: TodoItem }) {
+export const TodoItemCard = function ({item, index}: { item: TodoItem, index: number }) {
     const classes = useTodoItemCardStyles();
-    const { dispatch } = useTodoItems();
+    const {dispatch} = useTodoItems();
 
     const handleDelete = useCallback(
-        () => dispatch(deleteTodoAC({id:item.id})),
+        () => dispatch(deleteTodoAC({id: item.id})),
         [item.id, dispatch],
     );
 
     const handleToggleDone = useCallback(
         () =>
-            dispatch(toggleDoneAC({ id: item.id })),
+            dispatch(toggleDoneAC({id: item.id})),
         [item.id, dispatch],
     );
 
     return (
-        <Card
-            className={classnames(classes.root, {
-                [classes.doneRoot]: item.done,
-            })}
-        >
-            <CardHeader
-                action={
-                    <IconButton aria-label="delete" onClick={handleDelete}>
-                        <DeleteIcon />
-                    </IconButton>
-                }
-                title={
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={item.done}
-                                onChange={handleToggleDone}
-                                name={`checked-${item.id}`}
-                                color="primary"
+        <Draggable isDragDisabled={item.done} draggableId={item.id} index={index}>
+            {(provided: DraggableProvided) => (
+
+                <Card
+                    className={classnames(classes.root, {[classes.doneRoot]: item.done,})}
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                >
+                    <CardHeader
+                        action={
+                            <IconButton aria-label="delete" onClick={handleDelete}>
+                                <DeleteIcon/>
+                            </IconButton>
+                        }
+                        title={
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={item.done}
+                                        onChange={handleToggleDone}
+                                        name={`checked-${item.id}`}
+                                        color="primary"
+                                    />
+                                }
+                                label={item.title}
                             />
                         }
-                        label={item.title}
                     />
-                }
-            />
-            {item.details ? (
-                <CardContent>
-                    <Typography variant="body2" component="p">
-                        {item.details}
-                    </Typography>
-                </CardContent>
-            ) : null}
-        </Card>
+                    {item.details ? (
+                        <CardContent>
+                            <Typography variant="body2" component="p">
+                                {item.details}
+                            </Typography>
+                        </CardContent>
+                    ) : null}
+                </Card>
+            )}
+
+        </Draggable>
     );
 };
