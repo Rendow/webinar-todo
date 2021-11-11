@@ -1,6 +1,7 @@
 {
   "name": "webinar-frontend-test-task",
   "version": "0.1.0",
+  "homepage": "https://rendow.github.io/TodoList/",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.4",
@@ -14,6 +15,7 @@
     "@types/react-dom": "^17.0.8",
     "classnames": "^2.3.1",
     "framer-motion": "^4.1.17",
+    "gh-pages": "^3.2.3",
     "immer": "^9.0.6",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
@@ -27,7 +29,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
