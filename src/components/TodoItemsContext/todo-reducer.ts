@@ -1,4 +1,3 @@
-
 //types
 export interface TodoItem {
     id: string;
@@ -11,18 +10,24 @@ export interface TodoItemsState {
     todoItems: TodoItem[]
 }
 
-export type TodoItemsAction = ReturnType<typeof loadStateAC> | ReturnType<typeof dragAndDropAC> | ReturnType<typeof addTodoAC> | ReturnType<typeof deleteTodoAC> | ReturnType<typeof toggleDoneAC>
+export type TodoItemsAction =
+    ReturnType<typeof sortAC>
+    | ReturnType<typeof loadStateAC>
+    | ReturnType<typeof dragAndDropAC>
+    | ReturnType<typeof addTodoAC>
+    | ReturnType<typeof deleteTodoAC>
+    | ReturnType<typeof toggleDoneAC>
 
 // actions
 export const loadStateAC = (data: TodoItemsState) => ({type: 'TODO/LOAD-STATE', data} as const)
-export const addTodoAC = (data: { title: string; details?: string}) => ({type: 'TODO/ADD-TODO', data} as const)
-export const deleteTodoAC = (data: { id: string}) => ({type: 'TODO/DELETE-TODO', data} as const)
-export const toggleDoneAC = (data: { id: string}) => ({type: 'TODO/TOGGLE-DONE-TODO', data} as const)
-export const dragAndDropAC = (data: { source:number, destination:number}) => ({type: 'TODO/DRAG-AND-DROP', data} as const)
+export const addTodoAC = (data: { title: string; details?: string }) => ({type: 'TODO/ADD-TODO', data} as const)
+export const deleteTodoAC = (data: { id: string }) => ({type: 'TODO/DELETE-TODO', data} as const)
+export const toggleDoneAC = (data: { id: string }) => ({type: 'TODO/TOGGLE-DONE-TODO', data} as const)
+export const dragAndDropAC = (data: { source: number, destination: number }) => ({type: 'TODO/DRAG-AND-DROP', data} as const)
+export const sortAC = () => ({type: 'TODO/SORT'} as const)
 
 
-
-export function todoReducer(state: TodoItemsState, action: TodoItemsAction) {
+export function todoReducer(state: TodoItemsState, action: TodoItemsAction):TodoItemsState {
     switch (action.type) {
         case 'TODO/LOAD-STATE': {
             return action.data;
@@ -31,7 +36,7 @@ export function todoReducer(state: TodoItemsState, action: TodoItemsAction) {
             return {
                 ...state,
                 todoItems: [
-                    { id: generateId(), done: false, ...action.data },
+                    {id: generateId(), done: false, ...action.data},
                     ...state.todoItems,
                 ],
             };
@@ -39,7 +44,7 @@ export function todoReducer(state: TodoItemsState, action: TodoItemsAction) {
             return {
                 ...state,
                 todoItems: state.todoItems.filter(
-                    ({ id }) => id !== action.data.id,
+                    ({id}) => id !== action.data.id,
                 ),
             };
         case 'TODO/TOGGLE-DONE-TODO': {
@@ -60,14 +65,20 @@ export function todoReducer(state: TodoItemsState, action: TodoItemsAction) {
 
         case 'TODO/DRAG-AND-DROP':
             const {source, destination} = action.data
-
             const stateCopy = {...state};
             const todoList = stateCopy.todoItems
             const todo = stateCopy.todoItems.splice(source, 1);
             todoList.splice(destination, 0, ...todo)
 
             return stateCopy
+        case 'TODO/SORT': {
 
+            const newTodoArray = [...state.todoItems];
+            newTodoArray.sort((a, b) => {
+                return (a.done === b.done) ? 0 : a.done ? 1 : -1;
+            });
+            return {...state, todoItems: newTodoArray}
+        }
         default:
             throw new Error()
     }

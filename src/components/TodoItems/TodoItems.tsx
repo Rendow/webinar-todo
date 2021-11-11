@@ -11,7 +11,7 @@ import {makeStyles} from '@material-ui/core/styles';
 import classnames from 'classnames';
 import {motion} from 'framer-motion';
 import {useTodoItems} from '../TodoItemsContext/TodoItemsContext';
-import {deleteTodoAC, dragAndDropAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
+import {deleteTodoAC, dragAndDropAC, sortAC, TodoItem, toggleDoneAC} from "../TodoItemsContext/todo-reducer";
 import {
     DragDropContext,
     Draggable,
@@ -43,19 +43,6 @@ export const TodoItemsList = function () {
 
     const classes = useTodoItemListStyles();
 
-    const sortedItems = todoItems.slice().sort((a, b) => {
-
-        if (a.done && !b.done) {
-            return 1;
-        }
-
-        if (!a.done && b.done) {
-            return -1;
-        }
-
-        return 0;
-    });
-
     const handleDragEnd = (result: DropResult, provided?: ResponderProvided) => {
         const {destination, source} = result
         if (!destination) return;
@@ -70,9 +57,9 @@ export const TodoItemsList = function () {
                     <ul className={classes.root}
                         ref={providedDroppable.innerRef}  {...providedDroppable.droppableProps}>
 
-                        {sortedItems.map((item, index) => (
+                        {todoItems.map((item, index) => (
                             <motion.li key={item.id} transition={spring}
-                                // layout={true}
+                               // layout={true}
                             >
                                 <TodoItemCard index={index} item={item}/>
                             </motion.li>))}
@@ -105,13 +92,14 @@ export const TodoItemCard = function ({item, index}: { item: TodoItem, index: nu
     );
 
     const handleToggleDone = useCallback(
-        () =>
-            dispatch(toggleDoneAC({id: item.id})),
-        [item.id, dispatch],
-    );
+        () => {
+            dispatch(toggleDoneAC({id: item.id}));
+            dispatch(sortAC())
+        }, [item.id, dispatch]);
 
     return (
-        <Draggable isDragDisabled={item.done} draggableId={item.id} index={index}>
+        <Draggable //isDragDisabled={item.done}
+            draggableId={item.id} index={index}>
             {(provided: DraggableProvided) => (
 
                 <Card
@@ -120,6 +108,7 @@ export const TodoItemCard = function ({item, index}: { item: TodoItem, index: nu
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                 >
+
                     <CardHeader
                         action={
                             <IconButton aria-label="delete" onClick={handleDelete}>
